@@ -1,12 +1,14 @@
 
 #Incidència
 incidence = function(event, time, alpha = 0.05, period = 1, pers = 1000){
+  n_temps = 365.242199 * period * pers
   tab = table(event)
   #total = tapply(time, event, length)
-  time.count = tapply(time, event, sum)
-  incidence = tab/sum(time.count) * 365 * period * pers
-  inc.lo = incidence-qnorm(0.95 + alpha/2)*sqrt(tab)/sum(time.count) * 365 * period * pers
-  inc.hi = incidence+qnorm(0.95 + alpha/2)*sqrt(tab)/sum(time.count) * 365 * period * pers
+#   time.count = tapply(time, event, sum)
+  time.count = sum(time)
+  incidence = tab/time.count * n_temps
+  inc.lo = incidence-qnorm(0.95 + alpha/2)*sqrt(tab)/time.count * n_temps
+  inc.hi = incidence+qnorm(0.95 + alpha/2)*sqrt(tab)/time.count * n_temps
   res = list(ev = tab, time = time.count, inc = incidence['1'], lo = inc.lo['1'], hi = inc.hi['1'], 
              alpha = alpha, period=period, pers=pers)
   class(res) = 'incidence'
