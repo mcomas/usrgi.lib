@@ -3,6 +3,10 @@
 incidence = function(event, time, alpha = 0.05, period = 1, pers = 1000){
   n_temps = 365.242199 * period * pers
   tab = table(event)
+  if (length(tab)<2){
+    tab <- c(tab,0)
+    names(tab) <- c("0","1")
+  }
   #total = tapply(time, event, length)
 #   time.count = tapply(time, event, sum)
   time.count = sum(time)
@@ -151,10 +155,17 @@ print_summaries = function(sms){
         }
       }
       if(length(sms[[v]]$tab) > 2){
+        if( sms[[v]]$na != 0 ){
+          
+        }
         col = col[1:(i-1)]
         col.nms = col.nms[1:(i-1)]
         for(l in names(sms[[v]]$tab)){
-          col = c(col, sprintf( "            %d (%5.2f%%)", as.integer(sms[[v]]$tab[l]), 100*sms[[v]]$tab[l] / sms[[v]]$n ))
+          if(l == names(sms[[v]]$tab)[1] & sms[[v]]$na != 0){
+            col = c(col, sprintf( "na:%5.2f%%  %5d (%5.2f%%)", sms[[v]]$na/ sms[[v]]$n*100, as.integer(sms[[v]]$tab[l]), 100*sms[[v]]$tab[l] / sms[[v]]$n ))
+          }else{
+            col = c(col, sprintf( "            %5d (%5.2f%%)", as.integer(sms[[v]]$tab[l]), 100*sms[[v]]$tab[l] / sms[[v]]$n ))
+          }
           col.nms = c(col.nms, sprintf("%s[%s]", v, l))
         }
       }

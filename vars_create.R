@@ -287,3 +287,42 @@ groups_risc2 = function(regicor){
   x[!is.na(regicor) & regicor >= 10] = '[10+)'
   factor(x, levels=c('[0, 5)', '[5, 7.5)', '[7.5, 10)', '[10+)'))
 }
+bp_cat = function(tad, tas){
+  bp = rep('normal', length(tad))
+  bp[tas <  120 & tad < 80] = 'opti'
+  bp[(130 <= tas & tas < 140) | (85 <= tad & tad < 90)] = 'high'
+  bp[(140 <= tas & tas < 160) | (90 <= tad & tad < 100)] = 'i'
+  bp[160 <= tas | 100 <= tad] = 'ii'
+  factor(bp, levels = c('normal', 'opti', 'high', 'i', 'ii'))
+}
+
+# Explicació:
+#   Funció que categoritza la variable COLTOT segons els talls: 
+#   [160,200)", "[0,160)", "[200,240)", "[240,280)", "[280,Inf)
+# Input:
+#   - coltot: colesterol TOTAL
+# Output:
+#   - variable COLTOT categortizada segons funció REGICOR
+coltot_cat = function(coltot){
+  x = cut(coltot, breaks=c(0, 160, 200, 240, 280, Inf), right=F)
+  factor(x, levels=c("[160,200)", "[0,160)", "[200,240)", "[240,280)", "[280,Inf)"))
+}
+
+# Explicació:
+#   Funció que categoritza la variable HDL segons els talls: 
+#   "[45,50)", "[0,35)", "[35,45)", "[50,60)", "[60,Inf)"
+# Input:
+#   - colhdl: High colesterol
+# Output:
+#   - variable HDL categortizada segons funció REGICOR
+colhdl_cat = function(colhdl){
+  x = cut(colhdl, breaks=c(0, 35, 45, 50, 60, Inf), right=F)
+  factor(x, levels=c("[45,50)", "[0,35)", "[35,45)", "[50,60)", "[60,Inf)"))
+}
+
+# Explicació:
+#   Funció que categoritza la variable COLHDL segons els talls: [0,5), [5,7.5), [7.5,10) i >10
+# Input:
+#   - regicor: varaible REGICOR
+# Output:
+#   - variable REGICOR categortizada
