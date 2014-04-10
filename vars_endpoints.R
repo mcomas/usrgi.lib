@@ -104,3 +104,55 @@ follow_up.censured = function(dataset, endpoints = c('ami', 'angor', 'stroke_i',
   dataset[,'dexitus'] = dataset[,'dintro'] + tmin
   dataset
 }
+
+# Explicació:
+#   Funció que censura un endpoint fins a un periode concret
+# Input: 
+#   - dataset: matriu de dades.
+#   - end-points: conjunt d'end-points en que buscarem es censurarà arribat a un temps period)
+#   - period: seguiment de l'endpoint
+# Output:
+#   - dataset: amb els end-points modificats.
+adverse.effect_until = function(data, eps_until, period = 365){
+  for(e in eps_until){
+    i.e = paste('i.', e, sep='')
+    t.e = paste('t.', e, sep='')
+    e1 = paste(e, '_1y', sep='')
+    i.e1 = paste('i.', e1, sep='')
+    t.e1 = paste('t.', e1, sep='')
+    data[, e1] = data[,e]
+    data[, i.e1] = data[,i.e]
+    data[, t.e1] = data[,t.e]
+    sel = data[, t.e1] > period
+    data[sel, i.e1] = 0
+    data[sel, t.e1] = period
+  }
+  data
+}
+# Explicació:
+#   Funció que censura un endpoint abans d'un periode concret
+# Input: 
+#   - dataset: matriu de dades.
+#   - end-points: conjunt d'end-points en que buscarem es censurarà arribat a un temps period)
+#   - period: seguiment de l'endpoint
+# Output:
+#   - dataset: amb els end-points modificats.
+adverse.effect_from =  function(data, eps_from, period = 365){
+  for(e in eps_from){
+    i.e = paste('i.', e, sep='')
+    t.e = paste('t.', e, sep='')
+    e1 = paste(e, '_1y', sep='')
+    i.e1 = paste('i.', e1, sep='')
+    t.e1 = paste('t.', e1, sep='')
+    data[, e1] = data[,e]
+    data[, i.e1] = data[,i.e]
+    data[, t.e1] = data[,t.e]
+    sel = data[, t.e1] <= period
+    data[sel, i.e1] = 0
+    data[data[,i.e1] == 0, e1] = NA
+    data[, t.e1] = data[, t.e1] - period
+    sel = data[, t.e1] < 0
+    data[sel, t.e1] = 0
+  }
+  data
+}
