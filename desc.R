@@ -3,6 +3,10 @@
 incidence = function(event, time, alpha = 0.05, period = 1, pers = 1000){
   n_temps = 365.242199 * period * pers
   tab = table(event)
+  if (length(tab)<2){
+    tab <- c(tab,0)
+    names(tab) <- c("0","1")
+  }
   #total = tapply(time, event, length)
 #   time.count = tapply(time, event, sum)
   time.count = sum(time)
@@ -45,7 +49,9 @@ idiap_prevalence = function(x){
 ###
 ### FUNCIONS DESCRIPTIVES
 summary_numeric = function(x){
-  list('type'= 'numeric', 'n' = length(x), 'na' = sum(is.na(x)), 'mean' = mean(x,  na.rm=TRUE), 'sd' = sd(x,  na.rm=TRUE))
+  list('type'= 'numeric', 'n' = length(x), 'na' = sum(is.na(x)), 'mean' = mean(x,  na.rm=TRUE),
+       'sd' = sd(x,  na.rm=TRUE), 'min' = min(x, na.rm=TRUE), 'max' = max(x, na.rm=TRUE),
+       'quantile' = quantile(x, probs=c(0.25,0.5,0.75), na.rm=TRUE))
 }
 sum_imp_numeric = function(x){
   res = list()
@@ -54,6 +60,11 @@ sum_imp_numeric = function(x){
   res[['na']] = max(laply(x, function(y){y[['na']]}))
   res[['mean']] = mean(laply(x, function(y){y[['mean']]}))
   res[['sd']] = sqrt(sum(laply(x, function(y){y[['sd']]^2}))/length(x))
+  res[['min']] = mean(laply(x, function(y){y[['min']]}))
+  res[['max']] = mean(laply(x, function(y){y[['max']]}))
+  res[['quantile']] = c(mean(laply(x, function(y){y[['quantile']][1]})),
+                        mean(laply(x, function(y){y[['quantile']][2]})),
+                        mean(laply(x, function(y){y[['quantile']][3]})))
   res
 }
 summary_factor = function(x, base = NULL){
@@ -94,7 +105,7 @@ sum_imp_factor = function(x){
   res[['base']] = x[[1]][['base']]
   res
 }
-summaries = function(d, v_numeric, v_factor, v_factor_specific){
+summaries = function(d, v_numeric = c(), v_factor = c(), v_factor_specific = c()){
   vars = c(v_numeric, v_factor, names(v_factor_specific))
   sms = list()
   for(v in vars){
@@ -133,9 +144,10 @@ print_summaries = function(sms){
     i = length(col)
     if(sms[[v]]$type == 'numeric'){
       if( sms[[v]]$na != 0 ){
-        col[i] = sprintf(" na:%5.2f%% %5.2f (%6.2f)", sms[[v]]$na / sms[[v]]$n*100, sms[[v]]$mean, sms[[v]]$sd )
+        col[i] = sprintf("na:%5.2f%% %5.2f (%6.2f)", sms[[v]]$na / sms[[v]]$n*100,
+                         sms[[v]]$mean, sms[[v]]$sd )
       }else{
-        col[i] = sprintf("             %5.2f (%6.2f)", sms[[v]]$mean, sms[[v]]$sd )
+        col[i] = sprintf("           %5.2f (%6.2f)", sms[[v]]$mean, sms[[v]]$sd )
       }
     }
     if(sms[[v]]$type == 'factor'){
@@ -145,22 +157,63 @@ print_summaries = function(sms){
         }
         m = sms[[v]]$tab[sms[[v]]$base]
         if( sms[[v]]$na != 0 ){
-          col[i] = sprintf( "na:%5.2f%%  %d (%5.2f%%)", sms[[v]]$na/ sms[[v]]$n*100, as.integer(m), 100*m / (sms[[v]]$n - sms[[v]]$na) )
+          col[i] = sprintf( "na:%5.2f%%  %d (%5.2f%%)", sms[[v]]$na/ sms[[v]]$n*100, as.integer(m),
+                            100*m / (sms[[v]]$n - sms[[v]]$na) )
         }else{
           col[i] = sprintf( "            %d (%5.2f%%)", as.integer(m), 100*m / sms[[v]]$n )
         }
       }
       if(length(sms[[v]]$tab) > 2){
+        if( sms[[v]]$na != 0 ){
+          
+        }
         col = col[1:(i-1)]
         col.nms = col.nms[1:(i-1)]
         for(l in names(sms[[v]]$tab)){
-          col = c(col, sprintf( "            %d (%5.2f%%)", as.integer(sms[[v]]$tab[l]), 100*sms[[v]]$tab[l] / sms[[v]]$n ))
+          if(l == names(sms[[v]]$tab)[1] & sms[[v]]$na != 0){
+            col = c(col, sprintf( "na:%5.2f%%  %5d (%5.2f%%)", sms[[v]]$na/ sms[[v]]$n*100,
+                                  as.integer(sms[[v]]$tab[l]), 100*sms[[v]]$tab[l] / sms[[v]]$n ))
+          }else{
+            col = c(col, sprintf( "            %5d (%5.2f%%)", as.integer(sms[[v]]$tab[l]),
+                                  100*sms[[v]]$tab[l] / sms[[v]]$n ))
+          }
           col.nms = c(col.nms, sprintf("%s[%s]", v, l))
         }
       }
     }
   }
   names(col) = col.nms
+  col
+}
+
+print_summaries_numeric = function(sms){
+  col = c(rep("",6),sprintf("%s", sms[[1]]$n))
+  col.nms = 'n'
+  for(v in names(sms)){
+    col = rbind(col, rep('',7))
+    col.nms = c(col.nms, v)
+    i = dim(col)[1]
+    if(sms[[v]]$type == 'numeric'){
+      if( sms[[v]]$na != 0 ){
+        col[i,1] = sprintf("%5.2f%%", sms[[v]]$na / sms[[v]]$n*100)
+        col[i,2] = sprintf("%5.2f", sms[[v]]$min)
+        col[i,3] = sprintf("%5.2f", sms[[v]]$quantile[1])
+        col[i,4] = sprintf("%5.2f", sms[[v]]$quantile[2])
+        col[i,5] = sprintf("%5.2f", sms[[v]]$quantile[3])
+        col[i,6] = sprintf("%5.2f", sms[[v]]$max)
+        col[i,7] = sprintf("%5.2f (%6.2f)", sms[[v]]$mean, sms[[v]]$sd )
+      }else{
+        col[i,2] = sprintf("%5.2f", sms[[v]]$min)
+        col[i,3] = sprintf("%5.2f", sms[[v]]$quantile[1])
+        col[i,4] = sprintf("%5.2f", sms[[v]]$quantile[2])
+        col[i,5] = sprintf("%5.2f", sms[[v]]$quantile[3])
+        col[i,6] = sprintf("%5.2f", sms[[v]]$max)
+        col[i,7] = sprintf("%5.2f (%6.2f)", sms[[v]]$mean, sms[[v]]$sd )
+      }
+    }
+  }
+  colnames(col) <- c("na", "min", "1st", "media", "3rd", "max", "mean (sd)")
+  row.names(col) = col.nms
   col
 }
 
