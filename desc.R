@@ -95,7 +95,7 @@ sum_imp_factor = function(x){
   res
 }
 summaries = function(d, v_numeric, v_factor, v_factor_specific){
-  vars = sort(c(v_numeric, v_factor, names(v_factor_specific)))
+  vars = c(v_numeric, v_factor, names(v_factor_specific))
   sms = list()
   for(v in vars){
     if(v %in% v_numeric){
