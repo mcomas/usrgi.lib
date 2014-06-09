@@ -51,9 +51,8 @@ format.variables = function(dataset, vnumeric = c(), vdate = c(), vfactor = c())
     }else if(v %in% idiap_factor & !is.factor(dataset[,v])){
       dataset[,v] = as.factor(dataset[,v])
       message(paste(v, "converted to factor"))
-    }else{
-      cat(paste(v, ":", class(dataset[,v]), "\n"))
     }
+    cat(paste(v, ":", class(dataset[,v]), "\n"))
   }
   dataset
 }
