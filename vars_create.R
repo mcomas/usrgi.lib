@@ -320,9 +320,83 @@ colhdl_cat = function(colhdl){
   factor(x, levels=c("[45,50)", "[0,35)", "[35,45)", "[50,60)", "[60,Inf)"))
 }
 
-# Explicació:
-#   Funció que categoritza la variable COLHDL segons els talls: [0,5), [5,7.5), [7.5,10) i >10
-# Input:
-#   - regicor: varaible REGICOR
-# Output:
-#   - variable REGICOR categortizada
+score = function(sexo, fuma, diabetes, edat, coltot, tas){
+  if(! is.logical(diabetes)){
+    diabetes = diabetes == '1'
+  }
+  if(! is.logical(fuma)){
+    fuma = fuma == '1'
+  }
+  fuma2 = as.numeric(fuma)
+  diabetes2 = as.numeric(diabetes)
+  
+  alphamen = -22.1
+  alphawom = -29.8
+  pmen = 4.71
+  pwom = 6.36
+  
+  #Women.
+  so_edat=exp(-exp(alphawom)*(edat-20)^pwom)
+  so_ed10=exp(-exp(alphawom)*(edat-10)^pwom)
+  
+  
+  #Men.
+  sel = sexo == 'H'
+  so_edat[sel] = (exp(-exp(alphamen)*(edat-20)^pmen))[sel]
+  so_ed10[sel] = (exp(-exp(alphamen)*(edat-10)^pmen))[sel]
+  
+  
+  colmol=coltot*0.02586
+  #colmol=coltot
+  w=0.24*(colmol-6)+0.018*(tas-120)+0.71*fuma2
+  
+  score0=(so_edat)^exp(w)
+  score10=(so_ed10)^exp(w)
+  
+  scorechd=(1-(score10/score0))
+  
+  sel = diabetes2 ==1 & sexo=='D'
+  scorechd[sel] = scorechd[sel]*4
+  
+  sel = diabetes2 ==1 & sexo =='H'
+  scorechd[sel] = scorechd[sel]*2
+  
+  
+  
+  
+  #per als FATAL NO-CORONARY HEART DESEASE.
+  
+  alphamen = -26.7
+  alphawom = -31
+  pmen = 5.64
+  pwom = 6.62
+  
+  #Women.
+  so_edat=exp(-exp(alphawom)*(edat-20)^pwom)
+  so_ed10=exp(-exp(alphawom)*(edat-10)^pwom)
+  
+  #Men.
+  sel = sexo == 'H'
+  so_edat[sel] = (exp(-exp(alphamen)*(edat-20)^pmen))[sel]
+  so_ed10[sel] = (exp(-exp(alphamen)*(edat-10)^pmen))[sel]
+  
+  
+  w=0.02*(colmol-6)+0.022*(tas-120)+0.63*fuma2
+  score0=(so_edat)^exp(w)
+  score10=(so_ed10)^exp(w)
+  scorecv=(1-(score10/score0))
+  
+  sel = diabetes2==1 & sexo==0
+  scorecv[sel]=scorecv[sel]*4
+  
+  sel = diabetes2==1 & sexo==1
+  scorecv[sel]=scorecv[sel]*2
+  
+  
+  
+  
+  scoreall=scorechd+scorecv
+  
+  return(scoreall)
+  
+}

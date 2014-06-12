@@ -37,7 +37,8 @@ idiap.Date = function(){
 #   - dataset: matriu de dades original
 # Output:
 #   - matriu de dades amb format
-format.variables = function(dataset, vnumeric = c(), vdate = c(), vfactor = c(), silently=FALSE){
+
+format.variables = function(dataset, vnumeric = c(), vdate = c(), vfactor = c(), silently = FALSE){
   idiap_numeric = c(idiap.numeric(), vnumeric)
   idiap_date = c(idiap.Date(), names(dataset)[substring(names(dataset), 1, 3) == "ep_"], vdate)
   idiap_factor = c(idiap.factor(), vfactor)

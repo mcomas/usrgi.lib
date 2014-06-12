@@ -43,7 +43,8 @@ create.ep_combinate = function(deps){
 # Output:
 #   - dataset: dataset original afeguint les variables indicadores i de temps de l'end-point.
 format.endpoints = function(dataset, time_to_event = FALSE, check_exitus=FALSE, 
-                            eps = names(dataset)[substring(names(dataset), 1, 3) == "ep_"]){
+                            eps = names(dataset)[substring(names(dataset), 1, 3) == "ep_"],
+                            silently = FALSE){
   if(check_exitus){
     for(v in eps){
       sel = !is.na(dataset[,v]) & dataset$dexitus < dataset[,v] 
@@ -51,11 +52,13 @@ format.endpoints = function(dataset, time_to_event = FALSE, check_exitus=FALSE,
     }
   }
   for(v in eps){
-    cat("i.", v, ': created\n', sep='')
+    if(!silently){
+      cat("i.", v, ': created\n', sep='')
+    }
     dataset[,paste("i.", v, sep="")] = as.numeric(!is.na(dataset[,v]))
   }
   if(time_to_event){
-    dataset = time.to.event(dataset, eps = eps)
+    dataset = time.to.event(dataset, eps = eps, silently = silently)
   }
   dataset
 }
@@ -68,9 +71,11 @@ format.endpoints = function(dataset, time_to_event = FALSE, check_exitus=FALSE,
 #   - eps: noms dels diferents end-points que volem transformar
 # Output:
 #   - t.ep: temps fins a l'end-point o final d'estudi.
-time.to.event = function(dataset, eps){
+time.to.event = function(dataset, eps, silently = FALSE){
   for(v in eps){
-    cat("t.", v, ': created\n', sep="")
+    if(!silently){
+      cat("t.", v, ': created\n', sep="")
+    }
     dataset[,paste("t.", v, sep="")] = as.numeric(dataset[,'dexitus'] - dataset[,'dintro'])
     sel = !is.na(dataset[,v])
     dataset[sel,paste("t.", v, sep="")] = as.numeric(dataset[sel,v] - dataset[sel,'dintro'])
