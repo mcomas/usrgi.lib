@@ -91,7 +91,7 @@ time.to.event = function(dataset, eps, silently = FALSE){
 #                 Per defecte, c('ami', 'angor', 'stroke_i', 'stroke_e', 'pad', 'tia')
 # Output:
 #   - dataset: amb els end-points modificats.
-follow_up.censured = function(dataset, endpoints = c('ami', 'angor', 'stroke_i', 'stroke_e', 'pad', 'tia')){
+follow_up.censured = function(dataset, endpoints = c('ami', 'angor', 'stroke_i', 'stroke_e', 'pad', 'tia'), modify_date = FALSE){
   
   tmin = apply(dataset[,paste0('t.ep_', endpoints)], 1 , min)
   s_ep = apply(dataset[,paste0('i.ep_', endpoints)], 1 , sum) > 0
@@ -100,13 +100,20 @@ follow_up.censured = function(dataset, endpoints = c('ami', 'angor', 'stroke_i',
   dataset[s_ep, 'exitus'] = '*'
   for(ep in names(dataset)[substr(names(dataset), 1, 3)  == 'ep_']){
     difftime = dataset[,paste0('t.', ep)] - tmin
-    
     modif = s_ep & ( difftime > 0 | difftime <= 0 & paste0('i.', ep) == 0 )
     dataset[modif, paste0('i.', ep)] = 0
     dataset[modif, paste0('t.', ep)] = tmin[modif]
   }
   # S'actualitza la variable dexitus amb la informació de ep_death
   dataset[,'dexitus'] = dataset[,'dintro'] + tmin
+  if( modify_date ){
+    for(ep in names(dataset)[substr(names(dataset), 1, 3)  == 'ep_']){
+      difftime = dataset[,paste0('t.', ep)] - tmin
+      modif = s_ep & ( difftime > 0 | difftime <= 0 & paste0('i.', ep) == 0 )
+      dataset[modif, ep] = dataset[modif,'dexitus']
+      dataset[dataset[,paste0('t.', ep)] == 0, ep] = NA
+    }
+  }
   dataset
 }
 
