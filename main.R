@@ -5,9 +5,9 @@
 source(.root('vars.R'))
 
 #   Fitxer amb les funcions per descriure
-source(.root('desc.R'))
+source(.root('R/desc.R'))
 
 #   Fitxer amb les funcions per als models
-source(.root('mods.R'))
+source(.root('R/mods.R'))
 
-source(.root('lib-imp.R'))
+source(.root('R/lib-imp.R'))
