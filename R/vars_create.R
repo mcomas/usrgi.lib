@@ -293,6 +293,7 @@ bp_cat = function(tad, tas){
   bp[(130 <= tas & tas < 140) | (85 <= tad & tad < 90)] = 'high'
   bp[(140 <= tas & tas < 160) | (90 <= tad & tad < 100)] = 'i'
   bp[160 <= tas | 100 <= tad] = 'ii'
+  bp[bp == 'normal' & (is.na(tad) | is.na(tas))] = NA
   factor(bp, levels = c('normal', 'opti', 'high', 'i', 'ii'))
 }
 

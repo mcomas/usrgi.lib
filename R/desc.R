@@ -4,8 +4,10 @@ incidence = function(event, time, alpha = 0.05, period = 1, pers = 1000){
   n_temps = 365.242199 * period * pers
   tab = table(event)
   if (length(tab)<2){
-    tab <- c(tab,0)
-    names(tab) <- c("0","1")
+    res = c(0, 0)
+    names(res) = c('0', '1')
+    res[names(tab)] = tab
+    tab = res
   }
   #total = tapply(time, event, length)
 #   time.count = tapply(time, event, sum)
