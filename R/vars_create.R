@@ -47,7 +47,7 @@ regicor = function(age, men, smoking, diabetes, coltot, colhdl, sbp, dbp, years 
                     (0.17692* c200_239) +(0.50539* c240_279) + (0.65713* c280_) + 
                     (0.49744* h_35) + (0.24310* h35_44) - (0.05107* h50_59) - 
                     (0.48660*h60_) - (0.00226 * bp_opti) + (0.28320 *  bp_high) + 
-                    (0.52168 * bp_i) + (0.61859 * bp_ii) + (0.42839 * diabetes) + (0.52337* smoker) )[men]
+                    (0.52168 * bp_i) + (0.61859 * bp_ii) + (0.42839 * diabetes) + (0.52337* smoking) )[men]
   g_chol[men] =  3.489
   
   women = (sex == 'D')
@@ -55,7 +55,7 @@ regicor = function(age, men, smoking, diabetes, coltot, colhdl, sbp, dbp, years 
                       (0.20771* c200_239) + (0.24385 * c240_279) + (0.53513* c280_) + 
                       (0.84312* h_35) + (0.377096* h35_44) + (0.19785* h45_49) - 
                       (0.42951*h60_)- (0.53363 * bp_opti) - (0.06773 *  bp_high) + 
-                      (0.26288 * bp_i) + (0.46573 * bp_ii) + (0.59626 * diabetes) + (0.29246* smoker))[women]
+                      (0.26288 * bp_i) + (0.46573 * bp_ii) + (0.59626 * diabetes) + (0.29246* smoking))[women]
   g_chol[women] = 10.279
   
   b_chol = exp(l_chol - g_chol)
