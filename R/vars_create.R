@@ -50,7 +50,7 @@ regicor = function(age, men, smoking, diabetes, coltot, colhdl, sbp, dbp, years 
                     (0.52168 * bp_i) + (0.61859 * bp_ii) + (0.42839 * diabetes) + (0.52337* smoking) )[men]
   g_chol[men] =  3.489
   
-  women = (sex == 'D')
+  women = 1 - men
   l_chol[women] = ( (0.33766*age)  - (0.00268 * age^2)- (0.26138* c_160) + 
                       (0.20771* c200_239) + (0.24385 * c240_279) + (0.53513* c280_) + 
                       (0.84312* h_35) + (0.377096* h35_44) + (0.19785* h45_49) - 
