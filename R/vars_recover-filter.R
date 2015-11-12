@@ -202,7 +202,7 @@ recover.cholesterol = function(coltot, colhdl, colldl, tg, filter = TRUE){
   tg[tgb] = 5*(coltot[tgb] - colldl[tgb] - colhdl[tgb])
   if(filter){
     message('Applying filters to cholesterols')
-    filter.colesterol(coltot, colhdl, colldl, tg)
+    filter.cholesterol(coltot, colhdl, colldl, tg)
   }else{
     data.frame(coltot = coltot, colhdl = colhdl, colldl = colldl, tg = tg)
   }
