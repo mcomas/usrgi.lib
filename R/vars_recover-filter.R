@@ -77,27 +77,6 @@ filter.bp = function(sbp, dbp, inf.sbp = 60, inf.dbp = 30, sup.sbp = 250, sup.db
   cbind(sbp, dbp)
 }
 
-# Explicació:
-#   Filtra les variables sobre el colesterol (coltot, colhdl, colldl i tg), 
-#   per a que tots els valors estiguin entre dos límits.
-# Input:
-#   - coltot: variable on tenim la coltot.
-#   - colhdl: variable on tenim la colhdl.
-#   - colldl: variable on tenim la colldl.
-#   - tg: variable on tenim la tg.
-#   - inf.tot: límit inferior de coltot.
-#   - sup.tot: límit superior de coltot.
-#   - inf.hdl: límit inferior de colhdl.
-#   - sup.hdl: límit superior de colhdl.
-#   - inf.ldl: límit inferior de colldl.
-#   - sup.ldl: límit superior de colldl.
-#   - inf.tg: límit inferior de tg.
-#   - sup.tg: límit superior de tg.
-# Output:
-#   - coltot: variable coltot filtrada.
-#   - colhdl: variable colhdl filtrada.
-#   - colldl: variable colldl filtrada.
-#   - tg: variable tg filtrada.
 
 #' Filter liidic variables (coltot, colhdl, colldl, tg)
 #' 
@@ -203,7 +182,7 @@ recover.smoking = function(smoking, smoke, t_smoke, non_smoker_time = 365, na.va
 #' @return recovered cholesterols
 #' 
 #' @export
-recover.colesterol = function(coltot, colhdl, colldl, tg, filter = TRUE){  
+recover.cholesterol = function(coltot, colhdl, colldl, tg, filter = TRUE){  
   tot = as.numeric(is.na(coltot))
   hdl = as.numeric(is.na(colhdl))
   ldl = as.numeric(is.na(colldl))
