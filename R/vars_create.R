@@ -120,3 +120,65 @@ create.ep_death = function(exitus, dexitus, death = 'D'){
   res[select] = dexitus[select]
   res
 }
+
+time.to.event = function(dataset, eps, silently = FALSE){
+  for(v in eps){
+    if(!silently){
+      cat("t.", v, ': created\n', sep="")
+    }
+    dataset[,paste("t.", v, sep="")] = as.numeric(dataset[,'dexitus'] - dataset[,'dintro'])
+    sel = !is.na(dataset[,v])
+    dataset[sel,paste("t.", v, sep="")] = as.numeric(dataset[sel,v] - dataset[sel,'dintro'])
+  }
+  dataset
+}
+
+#' This function converts a given outcome in date format with time and event variables
+#' 
+#' @param dataset original dataset
+#' @param time_to_event calculate time to event
+#' @param check_exitus if TRUE all eps variables have to appear after dexitus date
+#' @param dexitus (default: 'dexitus')
+#' @param eps endpoints to calculate. (default: all variables starting with 'ep_')
+#' @param silently print messages (default = FALSE)
+#' @return original dataset with time and event variables included
+#' 
+#' @export
+create.endpoints = function(dataset, time_to_event = TRUE, check_exitus=FALSE, dexitus='dexitus',
+                            eps = names(dataset)[substring(names(dataset), 1, 3) == "ep_"],
+                            silently = TRUE){
+  if(check_exitus){
+    for(v in eps){
+      sel = !is.na(dataset[,v]) & dataset[,dexitus] < dataset[,v] 
+      dataset[sel,v] = NA
+    }
+  }
+  for(v in eps){
+    if(!silently){
+      cat("i.", v, ': created\n', sep='')
+    }
+    dataset[,paste("i.", v, sep="")] = as.numeric(!is.na(dataset[,v]))
+  }
+  if(time_to_event){
+    dataset = time.to.event(dataset, eps = eps, silently = silently)
+  }
+  dataset
+}
+
+#' Create a combined end-point from different endpoints
+#' 
+#' @param deps enpoints
+#' @return returns the combined endpoint
+#' 
+#' @export
+create.ep_combinate = function(deps){ 
+  res = deps[,1]
+  for(col in 2:ncol(deps)){
+    na.res = is.na(res)
+    nona.deps = ! is.na(deps[,col])
+    sel = ( na.res & nona.deps ) | ( ! na.res &  nona.deps & deps[,col] < res)
+    res[sel] = deps[sel, col]
+  }
+  res
+}
+
