@@ -224,14 +224,6 @@ recover.alcoholism = function(alcoholism, alcohol, na.value = 0){
   alcoholism_new
 }
 
-# Explicació:
-#   Recuperem inforamció segons si pren un tipus de medicació.
-# Input:
-#   - problem: problema que volem recuperar.
-#   - meds: medicaments relacionats amb el problema.
-# Output:
-#   - variable recuperada.
-
 #' Recover alcoholism
 #' 
 #' @param problem indicator variable for a given problem
