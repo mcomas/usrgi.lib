@@ -126,9 +126,9 @@ time.to.event = function(dataset, eps, silently = FALSE){
     if(!silently){
       cat("t.", v, ': created\n', sep="")
     }
-    dataset[,paste("t.", v, sep="")] = as.numeric(dataset[,'dexitus'] - dataset[,'dintro'])
+    dataset[,paste("t.", v, sep="")] = as.numeric(dataset[['dexitus']] - dataset[['dintro']])
     sel = !is.na(dataset[,v])
-    dataset[sel,paste("t.", v, sep="")] = as.numeric(dataset[sel,v] - dataset[sel,'dintro'])
+    dataset[sel,paste("t.", v, sep="")] = as.numeric(dataset[[v]][sel] - dataset[['dintro']][sel])
   }
   dataset
 }
