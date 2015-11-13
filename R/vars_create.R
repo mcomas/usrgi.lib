@@ -105,3 +105,18 @@ colhdl_cat = function(colhdl){
   factor(x, levels=c("[45,50)", "[0,35)", "[35,45)", "[50,60)", "[60,Inf)"))
 }
 
+
+#' Calculate an date event variable for death
+#' 
+#' @param exitus exitus reason
+#' @param date of exitus
+#' @param death level indicating death
+#' @return creates a date variable with the date of death for dose dying
+#' 
+#' @export
+create.ep_death = function(exitus, dexitus, death = 'D'){
+  res = as.Date( rep(NA, length(exitus)))
+  select = exitus == death
+  res[select] = dexitus[select]
+  res
+}
