@@ -172,12 +172,12 @@ create.endpoints = function(dataset, time_to_event = TRUE, check_exitus=FALSE, d
 #' 
 #' @export
 create.ep_combinate = function(deps){ 
-  res = deps[,1]
+  res = deps[[1]]
   for(col in 2:ncol(deps)){
     na.res = is.na(res)
-    nona.deps = ! is.na(deps[,col])
-    sel = ( na.res & nona.deps ) | ( ! na.res &  nona.deps & deps[,col] < res)
-    res[sel] = deps[sel, col]
+    nona.deps = ! is.na(deps[[col]])
+    sel = ( na.res & nona.deps ) | ( ! na.res &  nona.deps & deps[[col]] < res)
+    res[sel] = deps[[col]][sel]
   }
   res
 }
