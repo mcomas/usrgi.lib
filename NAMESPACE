@@ -3,6 +3,7 @@
 export(bp_cat)
 export(colhdl_cat)
 export(coltot_cat)
+export(create.ep_death)
 export(filter.bmi)
 export(filter.bp)
 export(filter.cholesterol)
