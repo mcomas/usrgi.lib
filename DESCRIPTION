@@ -1,10 +1,13 @@
 Package: usrgi.lib
-Title: What the package does (short line)
-Version: 0.1
-Authors@R: "First Last <first.last@example.com> [aut, cre]"
-Description: What the package does (paragraph)
+Encoding: UTF-8
+Title: Tools to tidy and to present results used in research support unit of Girona.
+Version: 0.2
+Authors@R: c(person("Jordi", "Blanch", role = c("aut")),
+             person("Marc", "Comas-Cufí", role = c("aut", "cre"),
+                    email = "mcomas@idiapjgol.info"))
+Description: Tools to tidy and to present results used in research support unit of Girona.
 Depends: R (>= 3.1.0)
-License: What license is it under?
+License: GPL
 LazyData: true
 Imports:
   dplyr (>= 0.4.2)
