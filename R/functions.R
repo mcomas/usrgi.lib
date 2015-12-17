@@ -1,4 +1,5 @@
-#' ifelse when used with Dates
+#' fitting a cox model to a multiple imputation dataset
+#' 
 #' 
 #' @param cond condition
 #' @param yes result when TrUE 
