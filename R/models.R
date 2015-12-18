@@ -10,7 +10,7 @@ fit_cox.mi = function(mi_data, str_coxph = "coxph(Surv(time = time, event = even
   if(analysis == 'as.treated'){
     mi_data = as_treated_df(mi_data)
   }
-  if(analysis == 'pre.protocol'){
+  if(analysis == 'per.protocol'){
     mi_data = per_protocol_df(mi_data)
   }
   nimp = length(unique(mi_data$imp))
