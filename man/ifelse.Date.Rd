@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{ifelse.Date}
 \alias{ifelse.Date}
-\title{ifelse when used with Dates}
+\title{fitting a cox model to a multiple imputation dataset}
 \usage{
 ifelse.Date(cond, yes, no)
 }
@@ -17,6 +17,6 @@ ifelse.Date(cond, yes, no)
 combinatino of yes and no depending on condition
 }
 \description{
-ifelse when used with Dates
+fitting a cox model to a multiple imputation dataset
 }
 
