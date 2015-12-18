@@ -2,10 +2,17 @@
 #' 
 #' @param mi_data multiple imputation data with each imputation in stacked by rows
 #' @param str_coxph string containing the cox models to be evaluated (default="coxph(Surv(time = time, event = event)~1")
+#' @param analysis type of analysis to perform 'intention.to.treat', 'per.protocol' and 'as.treated' (default: 'intention.to.treat')
 #' @return result of fitting the model
 #' 
 #' @export
-fit_cox.mi = function(mi_data, str_coxph = "coxph(Surv(time = time, event = event)~1"){ # = "coxph(Surv(time = time, event = event)~user+age+age^2+sex+htn+smoking+coltot_cat+colhdl_cat)"
+fit_cox.mi = function(mi_data, str_coxph = "coxph(Surv(time = time, event = event)~1", analysis = 'intention.to.treat'){
+  if(analysis == 'as.treated'){
+    mi_data = as_treated_df(mi_data)
+  }
+  if(analysis == 'pre.protocol'){
+    mi_data = per_protocol_df(mi_data)
+  }
   nimp = length(unique(mi_data$imp))
   l_df = split(mi_data, mi_data$imp)
   df_events = mi_data %>% dplyr::group_by(exposure) %>% dplyr::summarise(n = sum(event))
@@ -84,4 +91,60 @@ fit_cox.mi = function(mi_data, str_coxph = "coxph(Surv(time = time, event = even
                   'haz.hi' = exp(mod['user', 'hi 95']),
                   'nnt.cox' = nnt.cox,
                   'nnt' = nnt['risk']) )
+}
+
+as_treated_df = function(.data0){
+  .data = bind_rows(
+    # 'user' exposed period
+    .data0 %>%
+      subset(exposure == 'user') %>%
+      mutate(
+        time.stat.end = as.numeric(stat.end - dintro) + end_stat * 30,
+        censored = !is.na(time.stat.end) & time.stat.end < time,
+        event = ifelse(censored, 0, event),
+        time = ifelse(censored, time.stat.end, time) ),
+    # 'user' unexposed period
+    .data0 %>%
+      subset(exposure == 'user') %>%
+      mutate(
+        time.stat.end = as.numeric(stat.end - dintro) + end_stat * 30,
+        censored = !is.na(time.stat.end) & time.stat.end < time,
+        event = event,
+        time = time - time.stat.end ) %>%
+      subset(censored),
+    # 'control' unexposed period
+    .data0 %>% 
+      subset(exposure == 'control') %>%
+      mutate(
+        time.beg = as.numeric(stat.beg.all - dintro) + beg_stat * 30,
+        censored = !is.na(time.beg) & time.beg < time,
+        event = ifelse(censored, 0, event),
+        time = ifelse(censored, time.beg, time) ),
+    # 'control' exposed period
+    .data0 %>% 
+      subset(exposure == 'control') %>%
+      mutate(
+        time.beg = as.numeric(stat.beg.all - dintro) + beg_stat * 30,
+        censored = !is.na(time.beg) & time.beg < time,
+        event = event,
+        time = time - time.beg ) %>%
+      subset(censored) )
+}
+
+per_protocol_df = function(.data0){
+  .data = bind_rows(
+    .data0 %>% 
+      subset(exposure == 'user') %>%
+      mutate(
+        time.stat.end = as.numeric(stat.end - dintro) + end_stat * 30,
+        censored = !is.na(time.stat.end) & time.stat.end < time,
+        event = ifelse(censored, 0, event),
+        time = ifelse(censored, time.stat.end, time) ),
+    .data0 %>% 
+      subset(exposure == 'control') %>%
+      mutate(
+        time.beg = as.numeric(stat.beg.all - dintro) + beg_stat * 30,
+        censored = !is.na(time.beg) & time.beg < time,
+        event = ifelse(censored, 0, event),
+        time = ifelse(censored, time.beg, time) ) )
 }
