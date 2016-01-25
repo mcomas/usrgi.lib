@@ -69,26 +69,30 @@ fit_cox.mi = function(mi_data, str_coxph = "coxph(Surv(time = time, event = even
         inc_user <- summary(pool(as.mira(lapply(l_df, with, incidence(event = event[user==1], time = time[user==0])))))
       )
     }else{
-      inc_user = matrix(0, dimnames = list('user', 'est'))
+      inc_user = matrix(rep(0,3), ncol=3, dimnames = list('user', c('est', 'lo 95', 'hi 95')))
     }
     if( df_events %>% filter(exposure == 'control') %>% select(n) %>% min > 0 ){
       suppressWarnings(
         inc_cntr <- summary(pool(as.mira(lapply(l_df, with, incidence(event = event[user==0], time = time[user==0])))))
       )
     }else{
-      inc_cntr = matrix(0, dimnames = list('control', 'est'))
+      inc_cntr = matrix(rep(0,3), ncol=3, dimnames = list('control', c('est', 'lo 95', 'hi 95')))
     }
   }
   with(mi_data,
-       data_frame('ctrl.n' = sum(user==0)/nimp,
-                  'ctrl.ev' = sum(event[user==0]/nimp),
-                  'ctrl.inc' = inc_cntr[1, 'est'],
-                  'user.n' = sum(user==1)/nimp,
-                  'user.ev' = sum(event[user==1])/nimp,
-                  'user.inc' = inc_user[1, 'est'],
+       data_frame('ctl.n' = sum(user==0)/nimp,
+                  'c.ev' = sum(event[user==0])/nimp,
+                  'c.inc' = inc_cntr[1, 'est'],
+                  'c.lo' = inc_cntr[1, 'lo 95'],
+                  'c.hi' = inc_cntr[1, 'hi 95'],
+                  'usr.n' = sum(user==1)/nimp,
+                  'u.ev' = sum(event[user==1])/nimp,
+                  'u.inc' = inc_user[1, 'est'],
+                  'u.lo' = inc_user[1, 'lo 95'],
+                  'u.hi' = inc_user[1, 'hi 95'],
                   'haz' = exp(mod['user', 'est']), 
-                  'haz.lo' = exp(mod['user', 'lo 95']), 
-                  'haz.hi' = exp(mod['user', 'hi 95']),
+                  'h.lo' = exp(mod['user', 'lo 95']),  
+                  'h.hi' = exp(mod['user', 'hi 95']),
                   'nnt.cox' = nnt.cox,
                   'nnt' = nnt['risk']) )
 }
