@@ -182,3 +182,51 @@ create.ep_combinate = function(deps){
   res
 }
 
+
+#' Fix the level of statine treatment, using PETREA definition or binary
+#' 
+#' @param dose statin dose
+#' @param atc statin type
+#' @param definition character 'PETREA' (default), '2-levels'
+#' @return returns the statin level
+#' 
+#' @export
+create.statine_level = function(dose, atc, definition = 'PETREA'){
+  if(definition == 'PETREA'){
+    low = ( (dose == 20 | dose == 40) & atc == 'C10AA04' ) |
+      ( (dose == 10 | dose == 20) & atc == 'C10AA02' ) |
+      ( (dose == 10 ) & atc == 'C10AA03' ) |
+      ( (dose == 5 ) & atc == 'C10AA01' )    
+    moderate = ( (dose == 10 ) & atc == 'C10AA05' ) |
+      ( (dose == 80 ) & atc == 'C10AA04' ) |
+      ( (dose == 40 ) & atc == 'C10AA02' ) |
+      ( (dose == 20 | dose == 40 | dose == 80) & atc == 'C10AA03' ) |
+      ( (dose == 10 | dose == 20 ) & atc == 'C10AA01' )    
+    high = ( (dose == 20 | dose == 40) & atc == 'C10AA05' ) |
+      ( (dose == 40 | dose == 80 ) & atc == 'C10AA01' ) |
+      ( (dose == 5 | dose == 10 ) & atc == 'C10AA07' )    
+    very_high = ( (dose == 80 ) & atc == 'C10AA05' ) | 
+      ( (dose == 20 | dose == 40 ) & atc == 'C10AA07' )
+    level = NA
+    level[low] = 1
+    level[moderate] = 2
+    level[high] = 3
+    level[very_high] = 4
+  }else if(definition == '2-levels'){
+    low = ( atc == 'C10AA01' & (dose ==  5 | dose == 10 | dose == 20) ) |
+      ( atc == 'C10AA02' & (dose == 10 | dose == 20 | dose == 40) ) |
+      ( atc == 'C10AA03' & (dose == 10 | dose == 20 | dose == 40) ) |
+      ( atc == 'C10AA04' & (dose == 10 | dose == 20 | dose == 40) ) |
+      ( atc == 'C10AA05' & (dose == 10) )
+    high = ( atc == 'C10AA01' & (dose ==  40 | dose == 80) ) |
+      ( atc == 'C10AA02' & (dose == 80) ) |
+      ( atc == 'C10AA03' & (dose == 80) ) |
+      ( atc == 'C10AA04' & (dose == 80) ) |
+      ( atc == 'C10AA05' & (dose == 20 | dose == 40 | dose == 80) ) |
+      ( atc == 'C10AA07' )
+    level = NA
+    level[low] = 1
+    level[high] = 2
+  }
+  level
+}
