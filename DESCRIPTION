@@ -2,7 +2,7 @@ Package: usrgi.lib
 Encoding: UTF-8
 Title: Tools to tidy and to present results used in research support unit of
     Girona.
-Version: 0.2.6
+Version: 0.2.7
 Authors@R: c(person("Jordi", "Blanch", role = c("aut")),
              person("Marc", "Comas-Cufí", role = c("aut", "cre"),
                     email = "mcomas@idiapjgol.info"))
@@ -13,5 +13,6 @@ Depends:
 License: GPL
 LazyData: true
 Imports:
+    XML,
     dplyr (>= 0.4.2)
 RoxygenNote: 5.0.1
