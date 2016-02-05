@@ -1,3 +1,12 @@
+#' Returns the icd code for a disease
+#' 
+#' @param disease name of disease
+#' @param f_xml xml file with the definitions
+#' @param icd_list 
+#' @param icd
+#' @return coefficient for the incidence
+#' 
+#' @export
 get_icd = function(disease, f_xml, icd_list, icd = 10){
   l_icd = c()
   meta_diseases_in = getNodeSet(f_xml, sprintf("/problems/disease[@name='%s']/meta[not(@action='exclude')]/text()", disease))
