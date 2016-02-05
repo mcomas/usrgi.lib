@@ -1,3 +1,28 @@
+#' fit a cox model to multiple imputated data
+#' 
+#' @param frm formula passed to coxph
+#' @param mi_data imputated dataset
+#' @param mi_ind variable used to stratify the imputed datasetss
+#' @return result of the fitted the model
+#' 
+#' @export
+fit_coxph.mi = function(frm, mi_data, mi_ind = 'imp'){
+  nimp = length(unique(mi_data[[mi_ind]]))
+  l_df = split(mi_data, mi_data[[mi_ind]])
+  suppressWarnings(
+    mods.cox <- lapply(l_df, function(.d){
+      coxph(frm, data=.d)
+    })
+  )
+  suppressWarnings(
+    mod <- summary(pool(as.mira(mods.cox)))
+  )
+  with(mi_data,
+       data_frame('haz' = exp(mod['user', 'est']), 
+                  'h.lo' = exp(mod['user', 'lo 95']),  
+                  'h.hi' = exp(mod['user', 'hi 95'])))
+}
+
 #' ifelse when used with Dates
 #' 
 #' @param mi_data multiple imputation data with each imputation in stacked by rows
