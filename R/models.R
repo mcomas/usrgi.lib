@@ -3,10 +3,12 @@
 #' @param mi_data multiple imputation data with each imputation in stacked by rows
 #' @param str_coxph string containing the cox models to be evaluated (default="coxph(Surv(time = time, event = event)~1")
 #' @param analysis type of analysis to perform 'intention.to.treat', 'per.protocol' and 'as.treated' (default: 'intention.to.treat')
+#' @param str_survfit string containing the survival curve to be evaluated
 #' @return result of fitting the model
 #' 
 #' @export
-fit_cox.mi = function(mi_data, str_coxph = "coxph(Surv(time = time, event = event)~1", analysis = 'intention.to.treat'){
+fit_cox.mi = function(mi_data, str_coxph = "coxph(Surv(time = time, event = event)~1", analysis = 'intention.to.treat',
+                      str_survfit = gsub('user', 'strata(user)', str_coxph)){
   if(analysis == 'as.treated'){
     mi_data = as_treated_df(mi_data)
   }
@@ -27,7 +29,7 @@ fit_cox.mi = function(mi_data, str_coxph = "coxph(Surv(time = time, event = even
     )
     suppressWarnings(
       mods.strata <- lapply(l_df, function(.d){
-        with(.d,  eval(parse(text = gsub('user', 'strata(user)', str_coxph))))
+        with(.d,  eval(parse(text = str_survfit)))
       })
     )
     df.risk.cox = lapply(mods.cox, function(MOD){
