@@ -172,7 +172,7 @@ recover.smoking = function(smoking, smoke, t_smoke, non_smoker_time = 365, na.va
 # Output:
 #   - matriu amb els colesterols.
 
-#' Recover cholesterols
+#' Recover cholesterols (only if tg < 400)
 #' 
 #' @param coltot
 #' @param colhdl
@@ -189,7 +189,7 @@ recover.cholesterol = function(coltot, colhdl, colldl, tg, filter = TRUE){
   tgb = as.numeric(is.na(tg))
   
   all = tot + hdl + ldl + tgb
-  recov = all == 1
+  recov = all == 1 & (is.na(tgb) | tgb < 400)
   
   tot = is.na(coltot) & recov
   hdl = is.na(colhdl) & recov
