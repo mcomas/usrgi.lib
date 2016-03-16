@@ -230,3 +230,36 @@ create.statine_level = function(dose, atc, definition = 'PETREA'){
   }
   level
 }
+
+#' Fix the level of statine treatment, using PETREA definition or binary
+#' 
+#' @param dataset
+#' @param vnumeric
+#' @param vdate
+#' @param vfactor
+#' @param silently 
+#' @return returns dataset with variables converted
+#' 
+#' @export
+format.variables = function(dataset, vnumeric = c(), vdate = c(), vfactor = c(), silently = FALSE){
+  idiap_numeric = c(.vars.numeric, vnumeric)
+  idiap_date = c(.vars.dates, names(dataset)[substring(names(dataset), 1, 3) == "ep_"], vdate)
+  idiap_factor = c(.vars.factors, vfactor)
+  for(v in names(dataset)){
+    if(v %in% idiap_numeric & !is.numeric(dataset[,v]) ){
+      dataset[,v] = as.numeric(dataset[,v])
+      message(paste(v, "converted to numeric"))
+    }else if(v %in% idiap_date & class(dataset[,v]) != 'Date' ){
+      dataset[,v] = as.Date(dataset[,v])
+      message(paste(v, "converted to Date"))
+    }else if(v %in% idiap_factor & !is.factor(dataset[,v])){
+      dataset[,v] = as.factor(dataset[,v])
+      message(paste(v, "converted to factor"))
+    }else{
+      if(!silently){
+        cat(paste(v, ":", class(dataset[,v]), "\n"))
+      }
+    }
+  }
+  dataset
+}
