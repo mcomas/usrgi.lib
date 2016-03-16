@@ -231,7 +231,7 @@ create.statine_level = function(dose, atc, definition = 'PETREA'){
   level
 }
 
-#' Fix the level of statine treatment, using PETREA definition or binary
+#' Format variables
 #' 
 #' @param dataset
 #' @param vnumeric
