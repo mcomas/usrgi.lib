@@ -2,7 +2,7 @@
 % Please edit documentation in R/vars_recover-filter.R
 \name{recover.cholesterol}
 \alias{recover.cholesterol}
-\title{Recover cholesterols}
+\title{Recover cholesterols (only if tg < 400)}
 \usage{
 recover.cholesterol(coltot, colhdl, colldl, tg, filter = TRUE)
 }
@@ -17,6 +17,6 @@ recover.cholesterol(coltot, colhdl, colldl, tg, filter = TRUE)
 recovered cholesterols
 }
 \description{
-Recover cholesterols
+Recover cholesterols (only if tg < 400)
 }
 
