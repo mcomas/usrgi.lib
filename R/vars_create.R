@@ -263,3 +263,25 @@ format_variables = function(dataset, vnumeric = c(), vdate = c(), vfactor = c(),
   }
   dataset
 }
+
+#' Gromerular filtration rate function
+#' 
+#' @param cre Creatinine level
+#' @param age Age
+#' @param sex sex
+#' @param race  0 = white, 1 = black
+#' @return Gromerular filtration rate function
+#' 
+#' @export
+ckd.epi = function(cre, age, sex, race = 0){
+  # 0 WHITE
+  # 1 BLACK
+  k = ifelse(sex == 'H', 0.9, 0.7)
+  a = ifelse(sex == 'H', -0.411, -0.329)
+  eGFR =  141 * pmin(cre / k, 1)^a
+  eGFR = eGFR * pmax(cre / k, 1)^(-1.209) 
+  eGFR = eGFR * 0.993^age 
+  p1 = ifelse(sex == 'D', 1.018, 1)
+  p2 = ifelse(race == 1, 1.159, 1)
+  return(p1 * p2 * eGFR)
+}
