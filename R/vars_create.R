@@ -13,6 +13,7 @@
 #' 
 #' @export
 regicor = function(age, men, smoking, diabetes, coltot, colhdl, sbp, dbp, years = 10){
+  men = (men == 1)
   smoking = as.numeric(as.character(smoking))
   diabetes = as.numeric(as.character(diabetes))
   bp_opti = ifelse( sbp <  120 & dbp < 80 , 1, 0 )
