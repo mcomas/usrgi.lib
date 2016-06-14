@@ -42,8 +42,8 @@ fit_cox.mi = function(mi_data, str_coxph = "coxph(Surv(time = time, event = even
   }
   nimp = length(unique(mi_data$imp))
   l_df = split(mi_data, mi_data$imp)
-  df_events = mi_data %>% dplyr::group_by(exposure) %>% dplyr::summarise(n = sum(event))
-  if( df_events %>% select(n) %>% min > 0 ){
+  df_events = mi_data %>% dplyr::group_by(exposure, imp) %>% dplyr::summarise(n = sum(event)) %>% ungroup
+  if( df_events %>% select(n) %>% min > 1 ){
     suppressWarnings(
       mods.cox <- lapply(l_df, function(.d){
         with(.d,  eval(parse(text = str_coxph)))
