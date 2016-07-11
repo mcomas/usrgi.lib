@@ -4,14 +4,16 @@
 \alias{create.statine_level}
 \title{Fix the level of statine treatment, using PETREA definition or binary}
 \usage{
-create.statine_level(dose, atc, definition = "PETREA")
+create.statine_level(dose, atc, definition = "PETREA", eze = NULL)
 }
 \arguments{
 \item{dose}{statin dose}
 
 \item{atc}{statin type}
 
-\item{definition}{character 'PETREA' (default), '2-levels'}
+\item{definition}{character 'PETREA' (default), '2-levels', 'weng', 'azamora'}
+
+\item{ezetimibe}{treatment (only for some definitions (azamora, stone-masana-mod))}
 }
 \value{
 returns the statin level

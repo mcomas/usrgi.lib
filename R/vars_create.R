@@ -188,11 +188,13 @@ create.ep_combinate = function(deps){
 #' 
 #' @param dose statin dose
 #' @param atc statin type
-#' @param definition character 'PETREA' (default), '2-levels'
+#' @param definition character 'PETREA' (default), '2-levels', 'weng', 'azamora'
+#' @param ezetimibe treatment (only for some definitions (azamora, stone-masana-mod))
 #' @return returns the statin level
 #' 
 #' @export
-create.statine_level = function(dose, atc, definition = 'PETREA'){
+create.statine_level = function(dose, atc, definition = 'PETREA', eze = NULL){
+  level = rep(NA_integer_, length(dose))
   if(definition == 'PETREA'){
     low = ( (dose == 20 | dose == 40) & atc == 'C10AA04' ) |
       ( (dose == 10 | dose == 20) & atc == 'C10AA02' ) |
@@ -208,12 +210,12 @@ create.statine_level = function(dose, atc, definition = 'PETREA'){
       ( (dose == 5 | dose == 10 ) & atc == 'C10AA07' )    
     very_high = ( (dose == 80 ) & atc == 'C10AA05' ) | 
       ( (dose == 20 | dose == 40 ) & atc == 'C10AA07' )
-    level = NA
     level[low] = 1
     level[moderate] = 2
     level[high] = 3
     level[very_high] = 4
-  }else if(definition == '2-levels'){
+  }
+  if(definition == '2-levels'){
     low = ( atc == 'C10AA01' & (dose ==  5 | dose == 10 | dose == 20) ) |
       ( atc == 'C10AA02' & (dose == 10 | dose == 20 | dose == 40) ) |
       ( atc == 'C10AA03' & (dose == 10 | dose == 20 | dose == 40) ) |
@@ -225,9 +227,110 @@ create.statine_level = function(dose, atc, definition = 'PETREA'){
       ( atc == 'C10AA04' & (dose == 80) ) |
       ( atc == 'C10AA05' & (dose == 20 | dose == 40 | dose == 80) ) |
       ( atc == 'C10AA07' )
-    level = NA
     level[low] = 1
     level[high] = 2
+  }
+  if(definition == 'weng'){
+    low = ((dose <= 5) & atc == "C10AA01") |            # Simvastatin
+      ((dose <= 10) & atc == "C10AA03") |               # Pravastatin
+      ((dose <= 20) & atc == "C10AA04")                 # Fluvastatin
+    
+    moderate = ((dose == 10) & atc == "C10AA01") |      # Simvastatin
+      ((dose == 10 | dose == 20) & atc == "C10AA02") |  # Lovastatin
+      ((dose == 20 | dose == 40) & atc == "C10AA03") |  # Pravastatin
+      ((dose == 40) & atc == "C10AA04")                 # Fluvastatin
+    
+    high = ((dose == 20) & atc == "C10AA01") |          # Simvastatin
+      ((dose == 40 | dose == 80) & atc == "C10AA02") |  # Lovastatin
+      ((dose == 80) & atc == "C10AA04") |               # Fluvastatin
+      ((dose == 10) & atc == "C10AA05") |               # Atorvastatin
+      ((dose == 1 | dose == 2) & atc == "C10AA08")      # Pitavastatin
+    
+    very_high = ((dose >= 40) & atc == "C10AA01") |     # Simvastatin
+      ((dose >= 20) & atc == "C10AA05") |               # Atorvastatin
+      ((dose >= 5) & atc == "C10AA07") |                # Rosuvastatin
+      ((dose >= 4) & atc == "C10AA08")                  # Pitavastatin
+    
+    level[low] = 1
+    level[moderate] = 2
+    level[high] = 3
+    level[very_high] = 4
+  }
+  if(definition == 'azamora'){
+    low_mod = ((dose <= 40) & atc == "C10AA01") |    # Simvastatin
+      (atc == "C10AA02") |                           # Lovastatin
+      ((dose <= 40) & atc == "C10AA03") |            # Pravastatin
+      ((dose <= 80) & atc == "C10AA04") |            # Fluvastatin
+      ((dose <= 60) & atc == "C10AA05") |            # Atorvastatin
+      ((dose <= 10) & atc == "C10AA07") |            # Rosuvastatin
+      ((dose <= 4) & atc == "C10AA08")               # Pitavastatin
+    
+    high = ((dose == 80) & atc == "C10AA05") |       # Atorvastatin
+      ((dose== 20) & atc == "C10AA07")               # Rosuvastatin
+    
+    low_mod_eze = ((dose <= 10) & atc == "C10AA01") |  # Simvastatin
+      (atc == "C10AA02") |                             # Lovastatin
+      ((dose <= 40) & atc == "C10AA03") |              # Pravastatin
+      ((dose <= 80) & atc == "C10AA04") |              # Fluvastatin
+      ((dose <= 2) & atc == "C10AA08")                 # Pitavastatin
+    
+    high_eze = ((dose == 20 | dose == 40) & atc == "C10AA01") |   # Simvastatin
+      ((dose <= 40) & atc == "C10AA05") |                         # Atorvastatin
+      ((dose <= 10) & atc == "C10AA07") |                         # Rosuvastatin
+      ((dose == 4) & atc == "C10AA08")                            # Pitavastatin
+    
+    very_high_eze = ((dose == 60 | dose == 80) & atc == "C10AA05") |   # Atorvastatin
+      ((dose == 20) & atc == "C10AA07")                                # Rosuvastatin
+
+    level[eze & low_mod_eze] = 1
+    level[!eze & low_mod] = 1
+    level[eze & high_eze] = 2
+    level[!eze & high] = 2
+    level[eze & very_high_eze] = 3
+  }
+  if(definition == 'stone-masana-mod'){
+    low = ((dose <= 10) & atc == "C10AA01") |                      # Simvastatin
+      ((dose <= 20) & atc == "C10AA02") |                          # Lovastatin
+      ((dose <= 20) & atc == "C10AA03") |                          # Pravastatin
+      ((dose <= 40) & atc == "C10AA04") |                          # Fluvastatin
+      ((dose == 1) & atc == "C10AA08")                             # Pitavastatin
+    
+    mod = ((dose == 20 | dose == 40) & atc == "C10AA01") |         # Simvastatin
+      ((dose == 40) & atc == "C10AA02") |                          # Lovastatin
+      ((dose == 40 | dose == 80) & atc == "C10AA03") |             # Pravastatin
+      ((dose == 40 | dose == 80) & atc == "C10AA04") |             # Fluvastatin
+      ((dose == 10 | dose == 20) & atc == "C10AA05") |             # Atorvastatin
+      ((dose ==  5 | dose == 10) & atc == "C10AA07") |             # Rosuvastatin
+      ((dose == 2 | dose == 4) & atc == "C10AA08")                 # Pitavastatin
+
+    high = ((dose == 40 | dose == 80) & atc == "C10AA05") |        # Atorvastatin
+      ((dose== 20) & atc == "C10AA07")                             # Rosuvastatin
+    
+    mod_eze = ((dose <= 10) & atc == "C10AA01") |                  # Simvastatin
+      ((dose <= 20) & atc == "C10AA02") |                          # Lovastatin
+      ((dose <= 20) & atc == "C10AA03") |                          # Pravastatin
+      ((dose == 20 | dose == 40) & atc == "C10AA04") |             # Fluvastatin
+      ((dose == 1) & atc == "C10AA08")                             # Pitavastatin
+
+      
+    high_eze = ((dose == 20 | dose == 40) & atc == "C10AA01") |    # Simvastatin
+      ((dose == 40) & atc == "C10AA02") |                          # Lovastatin
+      ((dose == 40 | dose == 80) & atc == "C10AA03") |             # Pravastatin
+      ((dose == 40 | dose == 80) & atc == "C10AA04") |             # Fluvastatin
+      ((dose == 10 | dose == 20) & atc == "C10AA05") |             # Atorvastatin
+      ((dose ==  5 | dose == 10) & atc == "C10AA07") |             # Rosuvastatin
+      ((dose == 2 | dose == 4) & atc == "C10AA08")                 # Pitavastatin
+    
+    very_high_eze = ((dose == 60 | dose == 80) & atc == "C10AA05") |   # Atorvastatin
+      ((dose == 20) & atc == "C10AA07")                                # Rosuvastatin
+    
+    leve[!eze & low] = 1
+    level[!eze & mod] = 2
+    level[eze & mod_eze] = 2
+    level[!eze & high] = 3
+    level[eze & high_eze] = 3
+    level[eze & very_high_eze] = 4
+    
   }
   level
 }
