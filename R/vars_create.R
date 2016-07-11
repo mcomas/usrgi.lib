@@ -303,7 +303,7 @@ create.statine_level = function(dose, atc, definition = 'PETREA', eze = NULL){
       ((dose ==  5 | dose == 10) & atc == "C10AA07") |             # Rosuvastatin
       ((dose == 2 | dose == 4) & atc == "C10AA08")                 # Pitavastatin
 
-    high = ((dose == 40 | dose == 80) & atc == "C10AA05") |        # Atorvastatin
+    high = ((dose == 40 | dose == 60 | dose == 80) & atc == "C10AA05") |        # Atorvastatin
       ((dose== 20) & atc == "C10AA07")                             # Rosuvastatin
     
     mod_eze = ((dose <= 10) & atc == "C10AA01") |                  # Simvastatin
