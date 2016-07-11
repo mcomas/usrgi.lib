@@ -324,7 +324,7 @@ create.statine_level = function(dose, atc, definition = 'PETREA', eze = NULL){
     very_high_eze = ((dose == 60 | dose == 80) & atc == "C10AA05") |   # Atorvastatin
       ((dose == 20) & atc == "C10AA07")                                # Rosuvastatin
     
-    leve[!eze & low] = 1
+    level[!eze & low] = 1
     level[!eze & mod] = 2
     level[eze & mod_eze] = 2
     level[!eze & high] = 3
