@@ -299,7 +299,7 @@ create.statine_level = function(dose, atc, definition = 'PETREA', eze = NULL){
       ((dose == 40) & atc == "C10AA02") |                          # Lovastatin
       ((dose == 40 | dose == 80) & atc == "C10AA03") |             # Pravastatin
       ((dose == 40 | dose == 80) & atc == "C10AA04") |             # Fluvastatin
-      ((dose == 10 | dose == 20) & atc == "C10AA05") |             # Atorvastatin
+      ((dose == 10 | dose == 20 | dose == 30) & atc == "C10AA05") |             # Atorvastatin
       ((dose ==  5 | dose == 10) & atc == "C10AA07") |             # Rosuvastatin
       ((dose == 2 | dose == 4) & atc == "C10AA08")                 # Pitavastatin
 
@@ -317,7 +317,7 @@ create.statine_level = function(dose, atc, definition = 'PETREA', eze = NULL){
       ((dose == 40) & atc == "C10AA02") |                          # Lovastatin
       ((dose == 40 | dose == 80) & atc == "C10AA03") |             # Pravastatin
       ((dose == 40 | dose == 80) & atc == "C10AA04") |             # Fluvastatin
-      ((dose == 10 | dose == 20) & atc == "C10AA05") |             # Atorvastatin
+      ((dose == 10 | dose == 20 | dose == 30 | dose == 40) & atc == "C10AA05") |             # Atorvastatin
       ((dose ==  5 | dose == 10) & atc == "C10AA07") |             # Rosuvastatin
       ((dose == 2 | dose == 4) & atc == "C10AA08")                 # Pitavastatin
     
