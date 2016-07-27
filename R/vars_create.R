@@ -188,7 +188,7 @@ create.ep_combinate = function(deps){
 #' 
 #' @param dose statin dose
 #' @param atc statin type
-#' @param definition character 'PETREA' (default), '2-levels', 'weng', 'azamora'
+#' @param definition character 'PETREA' (default), '2-levels', 'weng', 'azamora', 'ACC/AHA-Guideline-2013'
 #' @param ezetimibe treatment (only for some definitions (azamora, stone-masana-mod))
 #' @return returns the statin level
 #' 
@@ -331,6 +331,28 @@ create.statine_level = function(dose, atc, definition = 'PETREA', eze = NULL){
     level[eze & high_eze] = 3
     level[eze & very_high_eze] = 4
     
+  }
+  if(definition == 'ACC/AHA-Guideline-2013'){
+    low = ( (dose <= 10) & atc == 'C10AA01' ) |
+      ( (dose <= 20) & atc == 'C10AA02' ) |
+      ( (dose <= 20) & atc == 'C10AA03' ) |
+      ( (dose <= 40) & atc == 'C10AA04' ) |
+      ( (dose <= 1 ) & atc == 'C10AA08' )    
+      
+    moderate = ( (20 <= dose & dose <= 40) & atc == 'C10AA01' ) |
+      ( (dose == 40) & atc == 'C10AA02' ) |
+      ( (40 <= dose & dose <= 80) & atc == 'C10AA03' ) |
+      ( (40 < dose) & atc == 'C10AA04' ) |
+      ( (dose == 10 | dose == 20) & atc == 'C10AA05' ) |
+      ( (dose == 5 | dose == 10) & atc == 'C10AA07' ) |
+      ( (dose == 2 | dose == 4) & atc == 'C10AA08' ) 
+    
+    high = ( (40 <= dose) & atc == 'C10AA05' ) |
+      ( (20 <= dose) & atc == 'C10AA07' )
+    
+    level[low] = 1
+    level[moderate] = 2
+    level[high] = 3
   }
   level
 }
