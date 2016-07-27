@@ -11,7 +11,7 @@ create.statine_level(dose, atc, definition = "PETREA", eze = NULL)
 
 \item{atc}{statin type}
 
-\item{definition}{character 'PETREA' (default), '2-levels', 'weng', 'azamora'}
+\item{definition}{character 'PETREA' (default), '2-levels', 'weng', 'azamora', 'ACC/AHA-Guideline-2013'}
 
 \item{ezetimibe}{treatment (only for some definitions (azamora, stone-masana-mod))}
 }
