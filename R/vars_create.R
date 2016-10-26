@@ -411,3 +411,20 @@ ckd.epi = function(cre, age, sex, race = 0){
   p2 = ifelse(race == 1, 1.159, 1)
   return(p1 * p2 * eGFR)
 }
+
+#' Gromerular filtration rate function
+#' 
+#' @param gfr Glomerular filtration rate
+#' @return Chronic kidney disease stage
+#' 
+#' @export
+ckd.stage = function(gfr){
+  res = rep(NA, length(gfr))
+  res[!is.na(gfr) & gfr >= 90] = 1
+  res[!is.na(gfr) & 90 > gfr & gfr >= 60] = 2
+  res[!is.na(gfr) & 60 > gfr & gfr >= 45] = 3
+  res[!is.na(gfr) & 45 > gfr & gfr >= 30] = 3.5 
+  res[!is.na(gfr) & 30 > gfr & gfr >= 15] = 4
+  res[!is.na(gfr) & 15 > gfr] = 5
+  return(res)
+}
