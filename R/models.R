@@ -136,7 +136,7 @@ as_treated_df = function(.data0){
         time = ifelse(censored, time.stat.end, time) ),
     # 'user' unexposed period
     .data0 %>%
-      subset(exposure == 'user') %>%
+      subset(exposure == 'control') %>%
       mutate(
         time.stat.end = as.numeric(stat.end - dintro) + end_stat * 30,
         censored = !is.na(time.stat.end) & time.stat.end < time,
@@ -153,7 +153,7 @@ as_treated_df = function(.data0){
         time = ifelse(censored, time.beg, time) ),
     # 'control' exposed period
     .data0 %>% 
-      subset(exposure == 'control') %>%
+      subset(exposure == 'user') %>%
       mutate(
         time.beg = as.numeric(stat.beg.all - dintro) + beg_stat * 30,
         censored = !is.na(time.beg) & time.beg < time,
