@@ -130,14 +130,16 @@ as_treated_df = function(.data0){
     .data0 %>%
       subset(exposure == 'user') %>%
       mutate(
+        exposure = 'user',
         time.stat.end = as.numeric(stat.end - dintro) + end_stat * 30,
         censored = !is.na(time.stat.end) & time.stat.end < time,
         event = ifelse(censored, 0, event),
-        time = ifelse(censored, time.stat.end, time) ),
+        time = ifelse(censored, time.stat.end, time)),
     # 'user' unexposed period
     .data0 %>%
-      subset(exposure == 'control') %>%
+      subset(exposure == 'user') %>%
       mutate(
+        exposure = 'control',
         time.stat.end = as.numeric(stat.end - dintro) + end_stat * 30,
         censored = !is.na(time.stat.end) & time.stat.end < time,
         event = event,
@@ -147,14 +149,16 @@ as_treated_df = function(.data0){
     .data0 %>% 
       subset(exposure == 'control') %>%
       mutate(
+        exposure = 'control',
         time.beg = as.numeric(stat.beg.all - dintro) + beg_stat * 30,
         censored = !is.na(time.beg) & time.beg < time,
         event = ifelse(censored, 0, event),
         time = ifelse(censored, time.beg, time) ),
     # 'control' exposed period
     .data0 %>% 
-      subset(exposure == 'user') %>%
+      subset(exposure == 'control') %>%
       mutate(
+        exposure = 'user',
         time.beg = as.numeric(stat.beg.all - dintro) + beg_stat * 30,
         censored = !is.na(time.beg) & time.beg < time,
         event = event,
