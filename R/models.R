@@ -123,7 +123,7 @@ fit_cox.mi = function(mi_data, str_coxph = "coxph(Surv(time = time, event = even
                   'nnt.cox' = nnt.cox,
                   'nnt' = nnt['risk']) )
 }
-
+#' @export
 as_treated_df = function(.data0){
   .data = bind_rows(
     # 'user' exposed period
@@ -161,7 +161,7 @@ as_treated_df = function(.data0){
         time = time - time.beg ) %>%
       subset(censored) )
 }
-
+#' @export
 per_protocol_df = function(.data0){
   .data = bind_rows(
     .data0 %>% 
