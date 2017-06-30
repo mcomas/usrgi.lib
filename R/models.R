@@ -124,7 +124,7 @@ fit_cox.mi = function(mi_data, str_coxph = "coxph(Surv(time = time, event = even
                   'nnt' = nnt['risk']) )
 }
 #' @export
-as_treated_df = function(.data0){
+as_treated_df = function(.data0, beg_stat = 12, end_stat = 12){
   .data = bind_rows(
     # 'user' exposed period
     .data0 %>%
