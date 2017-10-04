@@ -33,12 +33,12 @@ fit_coxph.mi = function(frm, mi_data, mi_ind = 'imp'){
 #' 
 #' @export
 fit_cox.mi = function(mi_data, str_coxph = "coxph(Surv(time = time, event = event)~1", analysis = 'intention.to.treat',
-                      str_survfit = gsub('user', 'strata(user)', str_coxph)){
+                      str_survfit = gsub('user', 'strata(user)', str_coxph), ...){
   if(analysis == 'as.treated'){
-    mi_data = as_treated_df(mi_data)
+    mi_data = as_treated_df(mi_data, ...)
   }
   if(analysis == 'per.protocol'){
-    mi_data = per_protocol_df(mi_data)
+    mi_data = per_protocol_df(mi_data, ...)
   }
   nimp = length(unique(mi_data$imp))
   l_df = split(mi_data, mi_data$imp)
@@ -166,7 +166,7 @@ as_treated_df = function(.data0, beg_stat = 12, end_stat = 12){
       subset(censored) )
 }
 #' @export
-per_protocol_df = function(.data0){
+per_protocol_df = function(.data0, beg_stat = 12, end_stat = 12){
   .data = bind_rows(
     .data0 %>% 
       subset(exposure == 'user') %>%
